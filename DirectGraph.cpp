@@ -164,6 +164,19 @@ void DirectGraph::printGraphInfo() {
     std::cout << "No. Nodes ---------------- " << nodes.size() << std::endl;
     std::cout << "Edge Weight Tot. --------- " << edgeWeightTotal << std::endl;
 }
+bool DirectGraph::toString() {
+    if(nodes.size() <= 0)
+        return false;
+
+    // Using '=====' instead of ; in order to keep DFSUtil for reuse
+    for(auto &e : nodes){
+        DFSutil(e->getData());
+        std::cout << "=======" << std::endl;
+    }
+
+    return true;
+
+}
 
 /*void DirectGraph::printEdgeTracker() {
     std::cout << std::endl;
@@ -176,3 +189,14 @@ void DirectGraph::printGraphInfo() {
     }
 
 }*/
+
+// Destructors
+bool DirectGraph::clean() {
+    nodes.clear();
+}
+
+
+
+
+
+
