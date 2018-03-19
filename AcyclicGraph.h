@@ -1,23 +1,18 @@
 //
-// Created by Michael on 2018-03-09.
+// Created by Michael on 2018-03-19.
 //
 
-#ifndef COEN244_ASS4_DIRECTGRAPH_H
-#define COEN244_ASS4_DIRECTGRAPH_H
+#ifndef COEN244_ASS4_ACYCLICGRAPH_H
+#define COEN244_ASS4_ACYCLICGRAPH_H
 
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <map>
-#include "Graph.h"
+#include "../Graph.h"
+
 struct Edge;
 
-
-class DirectGraph : public Graph {
+class AcyclicGraph : public Graph {
 private:
     int edgeWeightTotal;
-    std::vector< std::shared_ptr<Vertex> > nodes;
-    //std::map< int, std::vector<int> > edgeTracker;
+    std::vector <std::shared_ptr<Vertex> > nodes;
 public:
     virtual bool addVertex(std::shared_ptr<Vertex> ptr);
     virtual bool removeVertex(int);
@@ -46,9 +41,8 @@ public:
 
 
     virtual void DFSutil(int);
-    virtual bool DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>);
-
+    virtual bool DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>&);
 };
 
 
-#endif //COEN244_ASS4_DIRECTGRAPH_H
+#endif //COEN244_ASS4_ACYCLICGRAPH_H

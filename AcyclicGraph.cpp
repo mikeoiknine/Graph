@@ -1,18 +1,16 @@
 //
-// Created by Michael on 2018-03-09.
+// Created by Michael on 2018-03-19.
 //
 
-
-#include "DirectGraph.h"
+#include "AcyclicGraph.h"
 #include <algorithm>
 
-
 // Vertex Functions
-bool DirectGraph::addVertex(std::shared_ptr<Vertex> ptr) {
+bool AcyclicGraph::addVertex(std::shared_ptr<Vertex> ptr) {
     nodes.push_back(std::move(ptr));
     return true;
 }
-bool DirectGraph::removeVertex(int data) {
+bool AcyclicGraph::removeVertex(int data) {
     // Find the ID of desired node and return the index in graph vector
     int _index, _id;
     _id = getID(data);
@@ -32,17 +30,21 @@ bool DirectGraph::removeVertex(int data) {
 
     return true;
 }
-bool DirectGraph::searchVertex(int id) {
+bool AcyclicGraph::searchVertex(int id) {
     return (this->getIndex(id)) < 0 ? false : true;
 }
 
 
 // Edge Functions
-bool DirectGraph::addEdge(Edge &e, int src, int dest, int weight) { // Problem with indexing after deletion of node
+bool AcyclicGraph::addEdge(Edge &e, int src, int dest, int weight) {
     // Check if src and dest are nodes in graph
     if(!searchNodes(src))
         return false;
     if(!searchNodes(dest))
+        return false;
+
+    // If edge points backwards, return false
+    if(src > dest)
         return false;
 
     // Check if this edge already exists
@@ -66,7 +68,7 @@ bool DirectGraph::addEdge(Edge &e, int src, int dest, int weight) { // Problem w
 
     return true;
 }
-bool DirectGraph::removeEdge(int nodeNum, int desNodeNum) {
+bool AcyclicGraph::removeEdge(int nodeNum, int desNodeNum) {
     for(auto& e : nodes){
         if(e->getID() == nodeNum){
             edgeWeightTotal -= e->removeEdgeFromVertex(desNodeNum);
@@ -74,7 +76,7 @@ bool DirectGraph::removeEdge(int nodeNum, int desNodeNum) {
         }
     }
 }
-bool DirectGraph::searchNodes(int id) {
+bool AcyclicGraph::searchNodes(int id) {
     for(auto& i : nodes){
         if(id == i->getID()){
             return true;
@@ -83,8 +85,8 @@ bool DirectGraph::searchNodes(int id) {
 
     return false;
 }
-bool DirectGraph::searchEdge(int id) {
-    for(auto e : nodes){
+bool AcyclicGraph::searchEdge(int id) {
+    for(auto &e : nodes){
         for(auto i : e->returnEdgeArray()){
             if(i.id == id){
                 return true;
@@ -94,12 +96,13 @@ bool DirectGraph::searchEdge(int id) {
     return false;
 }
 
+
 // Depth First Search Algorithm
-void DirectGraph::DFSutil(int data) {
+void AcyclicGraph::DFSutil(int data){
     std::vector<int> visited;
     DFS(nodes[0], data, visited);
 }
-bool DirectGraph::DFS(std::shared_ptr<Vertex> v, int data, std::vector<int> visited) {
+bool AcyclicGraph::DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>& visited) {
     if(data == v->getData()){
         std::cout << v->getID() << std::endl;
         return true;
@@ -119,14 +122,14 @@ bool DirectGraph::DFS(std::shared_ptr<Vertex> v, int data, std::vector<int> visi
 
 
 // Getter Functions
-int DirectGraph::getID(int data) {
+int AcyclicGraph::getID(int data) {
     for(int _id = 0; _id < nodes.size(); _id++){
         if(data == nodes[_id]->getData()){
             return nodes[_id]->getID();
         }
     }
 }
-int DirectGraph::getIndex(int id) {
+int AcyclicGraph::getIndex(int id) {
     for(int i = 0; i < nodes.size(); i++){
         if(id == nodes[i]->getID()){
             return i;
@@ -137,7 +140,7 @@ int DirectGraph::getIndex(int id) {
 
 
 // Print Functions
-void DirectGraph::printNodes() {
+void AcyclicGraph::printNodes() {
     std::cout.flush();
     for(auto& e : nodes){
         std::cout << std::endl
@@ -147,7 +150,7 @@ void DirectGraph::printNodes() {
         std::cout << std::endl << std::endl;
     }
 }
-void DirectGraph::printNodesWithEdges() {
+void AcyclicGraph::printNodesWithEdges() {
     for(int e = 0; e < nodes.size(); e++){
         std::cout << std::endl
                   << "<---- Node " << nodes[e]->getID() << " ----> ";
@@ -160,11 +163,11 @@ void DirectGraph::printNodesWithEdges() {
     //printEdgeTracker();
 
 }
-void DirectGraph::printGraphInfo() {
+void AcyclicGraph::printGraphInfo() {
     std::cout << "No. Nodes ---------------- " << nodes.size() << std::endl;
     std::cout << "Edge Weight Tot. --------- " << edgeWeightTotal << std::endl;
 }
-bool DirectGraph::toString() {
+bool AcyclicGraph::toString() {
     if(nodes.size() <= 0)
         return false;
 
@@ -190,13 +193,16 @@ bool DirectGraph::toString() {
 
 }*/
 
+<<<<<<< HEAD:DirectGraph.cpp
 // Destructors
-bool DirectGraph::clean() {
+bool AcyclicGraph::clean() {
     nodes.clear();
 }
 
 
 
 
+=======
+>>>>>>> DAG:AcyclicGraph.cpp
 
 
