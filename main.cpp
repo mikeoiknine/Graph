@@ -3,11 +3,35 @@
 #include "Vertex.h"
 #include "Graph.h"
 #include "DirectGraph.h"
+#include "AcyclicGraph.h"
 
 
 int main() {
-    Graph *graph = new DirectGraph();
     bool isRunning = true;
+    Graph *graph;
+    int graphChoice;
+    std::cout << "What kind of graph would you like to make? " << std::endl;
+    do{
+        std::cout << std::endl;
+        std::cout << "1 - Directed Graph" << std::endl;
+        std::cout << "2 - Directed Acyclic Graph" << std::endl;
+        std::cout << "3 - Undirected Graph" << std::endl;
+        std::cin >> graphChoice;
+    }while(graphChoice > 3 or graphChoice < 1);
+
+    switch(graphChoice){
+        case 1:
+            graph = new DirectGraph();
+            break;
+        case 2:
+            graph = new AcyclicGraph();
+            break;
+
+        default:
+            exit(1);
+    }
+
+
 
     while(isRunning) {
 

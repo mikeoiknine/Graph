@@ -19,19 +19,16 @@ public:
     virtual bool searchVertex(int)=0;
     virtual bool searchEdge(int)=0;
 
-    virtual bool toString()=0;
-    virtual bool clean()=0;
-
 
     virtual void printNodes()=0;
     virtual void printNodesWithEdges()=0;
     virtual void printGraphInfo()=0;
 
-
-
+    virtual bool toString()=0;
+    virtual bool clean()=0;
 
     virtual void DFSutil(int)=0;
-    virtual bool DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>)=0;
+    virtual bool DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>&)=0;
 
 };
 
