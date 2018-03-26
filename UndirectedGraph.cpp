@@ -1,16 +1,18 @@
 //
-// Created by Michael on 2018-03-19.
+// Created by Michael on 2018-03-20.
 //
 
-#include "AcyclicGraph.h"
+
+#include "UndirectedGraph.h"
 #include <algorithm>
 
+
 // Vertex Functions
-bool AcyclicGraph::addVertex(std::shared_ptr<Vertex> ptr) {
+bool UndirectedGraph::addVertex(std::shared_ptr<Vertex> ptr) {
     nodes.push_back(std::move(ptr));
     return true;
 }
-bool AcyclicGraph::removeVertex(int data) {
+bool UndirectedGraph::removeVertex(int data) {
     // Find the ID of desired node and return the index in graph vector
     int _index, _id;
     _id = getID(data);
@@ -30,21 +32,17 @@ bool AcyclicGraph::removeVertex(int data) {
 
     return true;
 }
-bool AcyclicGraph::searchVertex(int id) {
+bool UndirectedGraph::searchVertex(int id) {
     return (this->getIndex(id)) < 0 ? false : true;
 }
 
 
 // Edge Functions
-bool AcyclicGraph::addEdge(Edge &e, int src, int dest, int weight) {
+bool UndirectedGraph::addEdge(Edge &e, int src, int dest, int weight) {
     // Check if src and dest are nodes in graph
     if(!searchNodes(src))
         return false;
     if(!searchNodes(dest))
-        return false;
-
-    // If edge points backwards, return false
-    if(src > dest)
         return false;
 
     // Check if this edge already exists
@@ -60,21 +58,35 @@ bool AcyclicGraph::addEdge(Edge &e, int src, int dest, int weight) {
     // Add edge to this nodes edgeArray
     nodes[getIndex(src)]->addEdgeToVertex(e);
 
+    // Add edge to destination node pointing to source node
+    Edge *a = new Edge(e.id);
+    a->edge = nodes[getIndex(src)];
+    a->weight = weight;
+
+    // Add edge from destination to this edge
+    nodes[getIndex(dest)]->addEdgeToVertex(*a);
+
 
     // Increment total weight of edges in graph (for overloading '>' '<' operators)
     edgeWeightTotal += weight;
 
     return true;
 }
-bool AcyclicGraph::removeEdge(int nodeNum, int desNodeNum) {
+bool UndirectedGraph::removeEdge(int nodeNum, int desNodeNum) {
     for(auto& e : nodes){
         if(e->getID() == nodeNum){
             edgeWeightTotal -= e->removeEdgeFromVertex(desNodeNum);
-            return true;
+            for(auto& a : nodes){
+                if(a->getID() == desNodeNum){
+                    a->removeEdgeFromVertex(nodeNum);
+                    return true;
+                }
+            }
+
         }
     }
 }
-bool AcyclicGraph::searchNodes(int id) {
+bool UndirectedGraph::searchNodes(int id) {
     for(auto& i : nodes){
         if(id == i->getID()){
             return true;
@@ -83,8 +95,8 @@ bool AcyclicGraph::searchNodes(int id) {
 
     return false;
 }
-bool AcyclicGraph::searchEdge(int id) {
-    for(auto &e : nodes){
+bool UndirectedGraph::searchEdge(int id) {
+    for(auto e : nodes){
         for(auto i : e->returnEdgeArray()){
             if(i.id == id){
                 return true;
@@ -96,11 +108,14 @@ bool AcyclicGraph::searchEdge(int id) {
 
 
 // Depth First Search Algorithm
-void AcyclicGraph::DFSutil(int data){
+void UndirectedGraph::DFSutil(int data){
+    int i = 0;
     std::vector<int> visited;
-    DFS(nodes[0], data, visited);
+    while(!DFS(nodes[i], data, visited) || i == nodes.size()){ i++; visited.clear(); };
 }
-bool AcyclicGraph::DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>& visited) {
+bool UndirectedGraph::DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>& visited) {
+    std::cout << "DATA          = " << data << std::endl;
+    std::cout << "VERTEX DATA   = " << v->getData() << std::endl;
     if(data == v->getData()){
         std::cout << v->getID() << std::endl;
         return true;
@@ -109,6 +124,7 @@ bool AcyclicGraph::DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>& vi
     visited.push_back(v->getID());
 
     for(auto &e : v->returnEdgeArray()){
+        std::cout << "LOOP" << std::endl;
         if(!(std::find(visited.begin(), visited.end(), e.edge.lock()->getID()) != visited.end())){
             std::cout << v->getID()  << "->" ; std::cout.flush();
             return DFS(nodes[getIndex(e.edge.lock()->getID())], data, visited);
@@ -120,14 +136,14 @@ bool AcyclicGraph::DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>& vi
 
 
 // Getter Functions
-int AcyclicGraph::getID(int data) {
+int UndirectedGraph::getID(int data) {
     for(int _id = 0; _id < nodes.size(); _id++){
         if(data == nodes[_id]->getData()){
             return nodes[_id]->getID();
         }
     }
 }
-int AcyclicGraph::getIndex(int id) {
+int UndirectedGraph::getIndex(int id) {
     for(int i = 0; i < nodes.size(); i++){
         if(id == nodes[i]->getID()){
             return i;
@@ -138,7 +154,7 @@ int AcyclicGraph::getIndex(int id) {
 
 
 // Print Functions
-void AcyclicGraph::printNodes() {
+void UndirectedGraph::printNodes() {
     std::cout.flush();
     for(auto& e : nodes){
         std::cout << std::endl
@@ -148,7 +164,7 @@ void AcyclicGraph::printNodes() {
         std::cout << std::endl << std::endl;
     }
 }
-void AcyclicGraph::printNodesWithEdges() {
+void UndirectedGraph::printNodesWithEdges() {
     for(int e = 0; e < nodes.size(); e++){
         std::cout << std::endl
                   << "<---- Node " << nodes[e]->getID() << " ----> ";
@@ -161,11 +177,11 @@ void AcyclicGraph::printNodesWithEdges() {
     //printEdgeTracker();
 
 }
-void AcyclicGraph::printGraphInfo() {
+void UndirectedGraph::printGraphInfo() {
     std::cout << "No. Nodes ---------------- " << nodes.size() << std::endl;
     std::cout << "Edge Weight Tot. --------- " << edgeWeightTotal << std::endl;
 }
-bool AcyclicGraph::toString() {
+bool UndirectedGraph::toString() {
     if(nodes.size() <= 0)
         return false;
 
@@ -180,26 +196,28 @@ bool AcyclicGraph::toString() {
 }
 
 // Bonus implementations
-bool AcyclicGraph::addVertexArray(std::vector<std::shared_ptr<Vertex> >& v){
+bool UndirectedGraph::addVertexArray(std::vector<std::shared_ptr<Vertex> >& v){
     for(auto &e : v){
         addVertex(e);
     }
 }
-bool AcyclicGraph::addEdgeArray(std::vector<Edge> &v, std::vector<int> src,
+bool UndirectedGraph::addEdgeArray(std::vector<Edge> &v, std::vector<int> src,
                                std::vector<int> dest, std::vector<int> weight) {
     for(int i = 0; i < v.size(); i++){
         addEdge(v[i], src[i], dest[i], weight[i]);
     }
 }
 
+
 // Destructors
-bool AcyclicGraph::clean() {
+bool UndirectedGraph::clean() {
     edgeWeightTotal = 0;
     nodes.clear();
 }
 
+
 // Operators
-bool AcyclicGraph::operator==(const AcyclicGraph &graph) {
+bool UndirectedGraph::operator==(const UndirectedGraph &graph) {
     if(nodes.size() != graph.nodes.size())
         return false;
     if(edgeWeightTotal != graph.edgeWeightTotal)
@@ -214,7 +232,7 @@ bool AcyclicGraph::operator==(const AcyclicGraph &graph) {
 
     return true;
 }
-AcyclicGraph& AcyclicGraph::operator=(const AcyclicGraph &RightGraph) {
+UndirectedGraph& UndirectedGraph::operator=(const UndirectedGraph &RightGraph) {
     if(&RightGraph != this){
         this->nodes.clear();
         this->edgeWeightTotal = RightGraph.edgeWeightTotal;
@@ -228,12 +246,12 @@ AcyclicGraph& AcyclicGraph::operator=(const AcyclicGraph &RightGraph) {
     }
 }
 
-AcyclicGraph AcyclicGraph::operator++(int) {
-    AcyclicGraph result(*this);
+UndirectedGraph UndirectedGraph::operator++(int) {
+    UndirectedGraph result(*this);
     ++(*this);
     return result;
 }
-AcyclicGraph &AcyclicGraph::operator++() {
+UndirectedGraph &UndirectedGraph::operator++() {
     for(auto& e : this->nodes){
         auto & v = e->returnEdgeArray();
         for(auto& i : v){
@@ -243,19 +261,13 @@ AcyclicGraph &AcyclicGraph::operator++() {
     }
     return *this;
 }
-AcyclicGraph &AcyclicGraph::operator+(const AcyclicGraph &graph) {
+UndirectedGraph &UndirectedGraph::operator+(const UndirectedGraph &graph) {
     // Append nodes of graph 1 to graph 2
     this->nodes.insert(this->nodes.end(), graph.nodes.begin(), graph.nodes.end());
     this->edgeWeightTotal += graph.edgeWeightTotal;
     return *this;
 }
-bool AcyclicGraph::operator>(const AcyclicGraph &graph) {
-    return (this->edgeWeightTotal > graph.edgeWeightTotal);
-}
-bool AcyclicGraph::operator<(const AcyclicGraph &graph) {
-    return (this->edgeWeightTotal < graph.edgeWeightTotal);
-}
-std::ostream &operator<<(std::ostream & out, const AcyclicGraph &graph) {
+std::ostream &operator<<(std::ostream & out, const UndirectedGraph &graph) {
     for(auto& i : graph.nodes){
         out << std::endl
             << "<---- Node " << i->getID() << " ----> "
@@ -267,8 +279,12 @@ std::ostream &operator<<(std::ostream & out, const AcyclicGraph &graph) {
 
     return out;
 }
-
-
+bool UndirectedGraph::operator>(const UndirectedGraph &graph) {
+    return (this->edgeWeightTotal > graph.edgeWeightTotal);
+}
+bool UndirectedGraph::operator<(const UndirectedGraph &graph) {
+    return (this->edgeWeightTotal < graph.edgeWeightTotal);
+}
 
 
 

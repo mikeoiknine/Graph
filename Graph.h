@@ -30,6 +30,11 @@ public:
     virtual void DFSutil(int)=0;
     virtual bool DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>&)=0;
 
+
+    // Bonus implementations
+    virtual bool addVertexArray(std::vector< std::shared_ptr<Vertex> >&)=0;
+    virtual bool addEdgeArray(std::vector<Edge>&, std::vector<int>, std::vector<int>, std::vector<int>)=0;
+
 };
 
 

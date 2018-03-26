@@ -1,24 +1,18 @@
 //
-// Created by Michael on 2018-03-09.
+// Created by Michael on 2018-03-20.
 //
 
-#ifndef COEN244_ASS4_DIRECTGRAPH_H
-#define COEN244_ASS4_DIRECTGRAPH_H
+#ifndef COEN244_ASS4_UNDIRECTEDGRAPH_H
+#define COEN244_ASS4_UNDIRECTEDGRAPH_H
 
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <map>
+
 #include "Graph.h"
-struct Edge;
 
-
-class DirectGraph : public Graph {
+class UndirectedGraph : public Graph {
 private:
     int edgeWeightTotal;
     std::vector< std::shared_ptr<Vertex> > nodes;
 public:
-    DirectGraph() { edgeWeightTotal = 0; };
     virtual bool addVertex(std::shared_ptr<Vertex> ptr);
     virtual bool removeVertex(int);
     virtual bool addEdge(Edge& e, int ,int, int);
@@ -54,16 +48,15 @@ public:
 
 
     // Operators
-    bool operator==(const DirectGraph&);
-    bool operator>(const DirectGraph&);
-    bool operator<(const DirectGraph&);
-    DirectGraph& operator=(const DirectGraph&);
-    DirectGraph& operator+(const DirectGraph&);
-    DirectGraph operator++(int);
-    DirectGraph& operator++();
-    friend std::ostream& operator<<(std::ostream&, const DirectGraph&);
-
+    bool operator==(const UndirectedGraph&);
+    bool operator>(const UndirectedGraph&);
+    bool operator<(const UndirectedGraph&);
+    UndirectedGraph& operator=(const UndirectedGraph&);
+    UndirectedGraph& operator+(const UndirectedGraph&);
+    UndirectedGraph operator++(int);
+    UndirectedGraph& operator++();
+    friend std::ostream& operator<<(std::ostream&, const UndirectedGraph&);
 };
 
 
-#endif //COEN244_ASS4_DIRECTGRAPH_H
+#endif //COEN244_ASS4_UNDIRECTEDGRAPH_H

@@ -7,35 +7,30 @@
 unsigned int dynamicID = 1;
 unsigned int dynamicEdgeID = 1;
 
+// Edge Functions
 Edge::Edge() {
     id = dynamicEdgeID++;
 }
+Edge::Edge(int _id) {
+    id = _id;
+}
 
+
+// Constructors
 Vertex::Vertex() {
     data = 0;
     id = dynamicID++;
 }
-
-
 Vertex::Vertex(int d) {
     data = d;
     id = dynamicID++;
 }
-
-
-std::vector<Edge> &Vertex::returnEdgeArray() {
-    return edgeArray;
+Vertex::Vertex(int _id, int _data) {
+    data = _data;
+    id = _id;
 }
 
-
-int Vertex::getData() {
-    return data;
-}
-
-int Vertex::getID() {
-    return id;
-}
-
+// Add/Delete Functions
 int Vertex::removeEdgeFromVertex(int desNodeNum) {
     int _edgeW = 0;
     // Find index of Destination in edgeArray of vertex and delete it
@@ -53,20 +48,9 @@ int Vertex::removeEdgeFromVertex(int desNodeNum) {
         }
     }
 }
-
-void Vertex::printEdgeArray() {
-    for(int i = 0; i < edgeArray.size(); i++){
-        std::cout << "  |--> Connected to node - No.: " << edgeArray[i].edge.lock()->getID() << " with weight of " << edgeArray[i].weight << " and ID of "
-                  <<edgeArray[i].id;
-        std::cout << std::endl;
-    }
-
-}
-
-void Vertex::addEdgeToVertex(Edge &e, int) {
+void Vertex::addEdgeToVertex(Edge &e) {
     this->edgeArray.push_back(e);
 }
-
 int Vertex::removeAllEdgesToNode(int vertexID) {
     std::cout << "In remove all edges " << std::endl;
     int tempWeight;
@@ -83,7 +67,28 @@ int Vertex::removeAllEdgesToNode(int vertexID) {
     return 0;
 }
 
+// Getter/Setter Functions
+std::vector<Edge> &Vertex::returnEdgeArray() {
+    return edgeArray;
+}
+int Vertex::getData() {
+    return data;
+}
+int Vertex::getID() {
+    return id;
+}
 
+// Print Functions
+void Vertex::printEdgeArray() {
+    for(int i = 0; i < edgeArray.size(); i++){
+        std::cout << "  |--> Connected to node - No.: " << edgeArray[i].edge.lock()->getID() << " with weight of " << edgeArray[i].weight << " and ID of "
+                  <<edgeArray[i].id;
+        std::cout << std::endl;
+    }
+
+}
+
+// Search Functions
 bool Vertex::searchEdgeForDuplicates(int destID) {
     for(int i = 0; i < edgeArray.size(); i++){
         if(edgeArray[i].edge.lock()->id == destID){
@@ -91,4 +96,18 @@ bool Vertex::searchEdgeForDuplicates(int destID) {
         }
     }
     return false;
+}
+
+
+Vertex &Vertex::operator=(const Vertex &RightVertex) {
+    std::cout << "In vertex" << std::endl;
+    if(this != &RightVertex){
+        this->id = RightVertex.id;
+        this->data = RightVertex.data;
+        for(int i = 0; i < RightVertex.edgeArray.size(); i++) {
+            this->edgeArray[i] = RightVertex.edgeArray[i];
+        }
+    }
+
+    return *this;
 }

@@ -41,6 +41,21 @@ public:
 
     virtual void DFSutil(int);
     virtual bool DFS(std::shared_ptr<Vertex> v, int data, std::vector<int>&);
+
+    // Bonus implementations
+    virtual bool addVertexArray(std::vector< std::shared_ptr<Vertex> >&);
+    virtual bool addEdgeArray(std::vector<Edge>&, std::vector<int>, std::vector<int>, std::vector<int>);
+
+
+    // Operators
+    bool operator==(const AcyclicGraph&);
+    bool operator>(const AcyclicGraph&);
+    bool operator<(const AcyclicGraph&);
+    AcyclicGraph& operator=(const AcyclicGraph&);
+    AcyclicGraph& operator+(const AcyclicGraph&);
+    AcyclicGraph operator++(int);
+    AcyclicGraph& operator++();
+    friend std::ostream& operator<<(std::ostream&, const AcyclicGraph&);
 };
 
 

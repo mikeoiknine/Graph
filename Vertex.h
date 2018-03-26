@@ -13,12 +13,13 @@
 class DirectGraph;
 class Vertex;
 
-struct Edge{
+struct Edge {
     int weight;
     int id;
     std::weak_ptr< Vertex > edge;
     Edge();
-    ~Edge(){std::cout << std::endl << "Edge Destructor called" << std::endl;}
+    Edge(int);
+    //~Edge(){std::cout << std::endl << "Edge Destructor called" << std::endl;}
 };
 
 class Vertex {
@@ -30,15 +31,18 @@ public:
 
     Vertex();
     Vertex(int);
+    Vertex(int, int);
     int getID();
     int getData();
-    void addEdgeToVertex(Edge &e, int);
+    void addEdgeToVertex(Edge &e);
     int removeEdgeFromVertex(int); // Returns edge weight
     void printEdgeArray();
 
     bool searchEdgeForDuplicates(int);
 
     int removeAllEdgesToNode(int);
+
+    Vertex& operator=(const Vertex&);
 };
 
 

@@ -56,10 +56,7 @@ bool DirectGraph::addEdge(Edge &e, int src, int dest, int weight) { // Problem w
     e.weight = weight;
 
     // Add edge to this nodes edgeArray
-    nodes[getIndex(src)]->addEdgeToVertex(e, dest);
-
-    // Add Edge to map with the Vertex being pointed to as the key (ID's of both)
-    //edgeTracker[e.edge.lock()->getID()].push_back(e.id);
+    nodes[getIndex(src)]->addEdgeToVertex(e);
 
     // Increment total weight of edges in graph (for overloading '>' '<' operators)
     edgeWeightTotal += weight;
@@ -93,7 +90,6 @@ bool DirectGraph::searchEdge(int id) {
     }
     return false;
 }
-
 
 // Depth First Search Algorithm
 void DirectGraph::DFSutil(int data){
@@ -185,4 +181,86 @@ bool DirectGraph::clean() {
     nodes.clear();
 }
 
+// Bonus implementations
+bool DirectGraph::addVertexArray(std::vector<std::shared_ptr<Vertex> >& v){
+        for(auto &e : v){
+            addVertex(e);
+        }
+}
+
+bool DirectGraph::addEdgeArray(std::vector<Edge> &v, std::vector<int> src,
+                               std::vector<int> dest, std::vector<int> weight) {
+    for(int i = 0; i < v.size(); i++){
+        addEdge(v[i], src[i], dest[i], weight[i]);
+    }
+}
+
+// Operators
+bool DirectGraph::operator==(const DirectGraph &graph) {
+    if(nodes.size() != graph.nodes.size())
+        return false;
+    if(edgeWeightTotal != graph.edgeWeightTotal)
+        return false;
+
+    for(int i = 0; i < nodes.size(); i++){
+        if(nodes[i]->getID() != graph.nodes[i]->getID())
+            return false;
+        if(nodes[i]->getData() != graph.nodes[i]->getData())
+            return false;
+    }
+
+    return true;
+}
+DirectGraph& DirectGraph::operator=(const DirectGraph &RightGraph) {
+    if(&RightGraph != this){
+        this->nodes.clear();
+        this->edgeWeightTotal = RightGraph.edgeWeightTotal;
+
+        for(auto e : RightGraph.nodes){
+            nodes.push_back(std::make_shared<Vertex>(*e));
+        }
+
+        return *this;
+
+    }
+}
+DirectGraph DirectGraph::operator++(int) {
+    DirectGraph result(*this);
+    ++(*this);
+    return result;
+}
+DirectGraph &DirectGraph::operator++() {
+    for(auto& e : this->nodes){
+        auto & v = e->returnEdgeArray();
+        for(auto& i : v){
+            i.weight++;
+            this->edgeWeightTotal++;
+        }
+    }
+    return *this;
+}
+std::ostream &operator<<(std::ostream & out, const DirectGraph &graph) {
+    for(auto& i : graph.nodes){
+        out << std::endl
+            << "<---- Node " << i->getID() << " ----> "
+            << std::endl
+            << "Data ----------> " << i->getData()
+            << std::endl;
+        i->printEdgeArray();
+    }
+
+    return out;
+}
+bool DirectGraph::operator>(const DirectGraph &graph) {
+    return (this->edgeWeightTotal > graph.edgeWeightTotal);
+}
+bool DirectGraph::operator<(const DirectGraph &graph) {
+    return (this->edgeWeightTotal < graph.edgeWeightTotal);
+}
+DirectGraph &DirectGraph::operator+(const DirectGraph &graph) {
+    // Append nodes of graph 1 to graph 2
+    this->nodes.insert(this->nodes.end(), graph.nodes.begin(), graph.nodes.end());
+    this->edgeWeightTotal += graph.edgeWeightTotal;
+    return *this;
+}
 
